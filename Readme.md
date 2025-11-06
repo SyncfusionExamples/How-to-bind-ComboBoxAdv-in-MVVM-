@@ -1,139 +1,99 @@
-#   How to bind ComboBoxAdv in MVVM
-This section explains how to bind ComboBoxAdv in MVVM.
+#  How to Bind WPF ComboBoxAdv in MVVM
+This guide explains how to bind the ComboBoxAdv control in an MVVM architecture using Syncfusion WPF components.
 
-# Creating project
-Below section provides detailed information to create new project in Visual Studio to display ComboBoxAdv.
-# Adding control manually in XAML
-In order to add ComboBoxAdv control manually in XAML, do the below steps,
+## Creating the Project
+To get started:
+- Create a new WPF project in Visual Studio.
+- Add the required Syncfusion assembly reference: Syncfusion.Shared.WPF
 
-1. Add the below required assembly references to the project,
-
-   * Syncfusion.Shared.WPF
-2. Import Syncfusion WPF schema http://schemas.syncfusion.com/wpf in XAML page or Syncfusion.Windows.Tools.Controls namespace.
-
-3. Declare ComboBoxAdv in XAML page.
-**[XAML]**
-
+### Adding ComboBoxAdv in XAML
+To manually add the control in XAML:
+1. Import the Syncfusion WPF schema:
+```XAML
+xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
 ```
- <Grid>
-      <syncfusion:ComboBoxAdv Height="30" Width="150"/>
- </Grid>
+2. Declare the control:
+```XAML
+<Grid>
+    <syncfusion:ComboBoxAdv Height="30" Width="150"/>
+</Grid>
 ```
 
-# Adding control manually in C#
-In order to add ComboBoxAdv control manually in C#, do the below steps,
+### Adding ComboBoxAdv in C#
+To add the control programmatically:
+```C#
+using Syncfusion.Windows.Tools.Controls;
 
-1. Add the below required assembly references to the project,
-
-    * Syncfusion.Shared.WPF
-2. Import ComboBoxAdv namespace Syncfusion.Windows.Tools.Controls.
-
-3. Create ComboBoxAdv control instance and add it to the page.
-
-
-**[C#]**
-```
 public partial class MainWindow : Window
 {
     public MainWindow()
     {
         InitializeComponent();
-        ComboBoxAdv comboBoxAdv = new ComboBoxAdv();
+        ComboBoxAdv comboBoxAdv = new ComboBoxAdv
+        {
+            Height = 30,
+            Width = 150,
+            DefaultText = "Choose Items"
+        };
         this.Content = comboBoxAdv;
-        comboBoxAdv.Height = 30;
-        comboBoxAdv.Width = 150;
-        comboBoxAdv.DefaultText = "choose Items";
     }
 }
 ```
-#   Bind ComboBoxAdv in MVVM
-**[XAML]**
 
-```
-<syncfusion:ComboBoxAdv VerticalAlignment="Center" 
-                        ItemsSource="{Binding ModelItems}" 
-                        DisplayMemberPath="Text" 
-                        SelectedItem="{Binding SelectedModel,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                        HorizontalAlignment="Center" 
-                        Width="126">
-            
-</syncfusion:ComboBoxAdv>
+### Binding ComboBoxAdv in MVVM
+**[XAML]**
+```XAML
+<syncfusion:ComboBoxAdv
+    VerticalAlignment="Center"
+    ItemsSource="{Binding ModelItems}" 
+    DisplayMemberPath="Text" 
+    SelectedItem="{Binding SelectedModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+    HorizontalAlignment="Center" 
+    Width="126"/>
 ````
 
 **ViewModel**
-
-**[C#]**
-```
-
+```C#
 public class ViewModel : INotifyPropertyChanged
+{
+    public ObservableCollection<Model> ModelItems { get; set; }
+
+    private Model selectedModel;
+    public Model SelectedModel
     {
-        #region ICommand
-        private ICommand _clickCommand;
-        public ICommand ClickCommand
+        get => selectedModel;
+        set
         {
-            get
-            {
-                return _clickCommand ?? (_clickCommand = new CommandHandler(() => MyAction(), () => CanExecute));
-            }
+            selectedModel = value;
+            OnPropertyChanged(nameof(SelectedModel));
         }
-        public bool CanExecute
-        {
-            get
-            {
-                return true;
-            }
-        }
-        #endregion
-        public void MyAction()
-        {
-            SelectedModel = ModelItems[2];
-        }
-
-        private ObservableCollection<Model> modelItems;
-
-        public ObservableCollection<Model> ModelItems
-        {
-            get { return modelItems; }
-            set
-            {
-                modelItems = value;
-            }
-        }
-
-        private Model selectedModel;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyRaised(string propertyname)
-        {
-            if (PropertyChanged != null) { }
-        }
-
-        public Model SelectedModel
-        {
-            get { return selectedModel; }
-            set { selectedModel = value; OnPropertyRaised("SelectedModel"); }
-        }
-
-        public ViewModel()
-        {
-            ModelItems = new ObservableCollection<Model>();
-            SelectedModel = new Model();
-            Model model1 = new Model() { Text = "Item1" };
-            Model model2 = new Model() { Text = "Item2" };
-            Model model3 = new Model() { Text = "Item3" };
-
-            ModelItems.Add(model1);
-            ModelItems.Add(model2);
-            ModelItems.Add(model3);
-        }
-
     }
+
+    public ViewModel()
+    {
+        ModelItems = new ObservableCollection<Model>
+        {
+            new Model { Text = "Item1" },
+            new Model { Text = "Item2" },
+            new Model { Text = "Item3" }
+        };
+        SelectedModel = ModelItems[0];
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}
 ```
-## How to run this application?
-To run this application, you need to first clone the How-to-bind-ComboBoxAdv-in-MVVM- and then open it in Visual Studio 2022. Now, simply build and run your project to view the output.
-## <a name="troubleshooting"></a>Troubleshooting ##
-### Path too long exception
-If you are facing path too long exception when building this example project, close Visual Studio and rename the repository to short and build the project.
-## License
-Syncfusion has no liability for any damage or consequence that may arise by using or viewing the samples. The samples are for demonstrative purposes, and if you choose to use or access the samples, you agree to not hold Syncfusion liable, in any form, for any damage that is related to use, for accessing, or viewing the samples. By accessing, viewing, or seeing the samples, you acknowledge and agree Syncfusion’s samples will not allow you seek injunctive relief in any form for any claim related to the sample. If you do not agree to this, do not view, access, utilize, or otherwise do anything with Syncfusion’s samples.
+## Running the Application
+- Clone the repository.
+- Open the solution in Visual Studio 2022.
+- Build and run the project to see the ComboBoxAdv in action.
+
+## Troubleshooting
+### Path Too Long Exception
+If you encounter a "path too long" error during build:
+- Close Visual Studio.
+- Rename the repository folder to a shorter name.
+- Reopen and build the project.
